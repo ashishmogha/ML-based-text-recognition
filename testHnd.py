@@ -7,6 +7,7 @@ from skimage import color, transform
 from skimage.io import imread,imshow
 from sklearn import svm
 from sklearn.decomposition import PCA
+from sklearn.externals import joblib
 
 import os
 
@@ -25,8 +26,8 @@ sampleDir = dataCwd + "/" + "Sample001"
 files = os.listdir(sampleDir)
 
 collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in files])
-data_X = np.array([hog(x, orientations=9, pixels_per_cell=(12, 12),
-                    cells_per_block=(2, 2), visualise=False) for x in collection])
+data_X = np.array([hog(transform.resize(x,(128,128), mode='reflect'), orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
+                    cells_per_block=(2, 2), visualise=False) for x in collection[:25]])
 
 for f in os.listdir(dataCwd):
    if f != ".DS_Store":
@@ -34,8 +35,8 @@ for f in os.listdir(dataCwd):
            sampleDir = dataCwd + "/" + f
            files = os.listdir(sampleDir)
            collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in files])
-           data_X = np.concatenate((data_X,np.array([hog(x, orientations=9, pixels_per_cell=(12, 12),
-                    cells_per_block=(2, 2), visualise=False) for x in collection])))
+           data_X = np.concatenate((data_X,np.array([hog(transform.resize(x,(128,128), mode='reflect'), orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
+                    cells_per_block=(2, 2), visualise=False) for x in collection[:25]])))
 
 del collection
 del files,f
@@ -43,7 +44,7 @@ del files,f
 data_Y = {}
 
 for f in range(1,63):
-    data_Y[f] = [str(getkey(f))] * 55
+    data_Y[f] = [str(getkey(f))] * 25
 
 
 
@@ -54,15 +55,18 @@ for f in range(1,63):
 clf = svm.SVC()
 clf.fit(data_X,Y)
 
-image = color.rgb2gray(imread(dataCwd + "/Sample035" + "/img035-00071.png"))
-image = transform.resize(image,(128,128))
-fd,hog_image = hog(image, orientations=9, pixels_per_cell=(12, 12),
+image = color.rgb2gray(imread(dataCwd + "/Sample015" + "/img015-043.png"))
+image = transform.resize(image,(128,128), mode='reflect')
+fd,hog_image = hog(image, orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
                     cells_per_block=(2, 2), visualise=True)
 
 imshow(image)
 imshow(hog_image)
 
-clf.predict(fd)
+clf.predict(fd.reshape(1,-1))
+
+joblib.dump(clf, os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
+
 
 '''
 pca = PCA(n_components=2).fit(X)

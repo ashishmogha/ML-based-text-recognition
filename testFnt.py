@@ -64,10 +64,10 @@ fd,hog_image = hog(image, orientations=9, pixels_per_cell=(12, 12),
 imshow(image)
 imshow(hog_image)
 
-clf.predict(fd)
+clf.predict(fd.reshape(1,-1))
 
-newclf = joblib.load(os.path.join(os.getcwd(),"savedSVMs", "svmfnt.pkl"))
-newclf.predict(fd)
+#newclf = joblib.load(os.path.join(os.getcwd(),"savedSVMs", "svmfnt.pkl"))
+#newclf.predict(fd)
 
 
 '''
