@@ -64,6 +64,7 @@ imshow(image)
 imshow(hog_image)
 
 clf.predict(fd.reshape(1,-1))
+clf.score(data_X,Y)
 
 joblib.dump(clf, os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
 
