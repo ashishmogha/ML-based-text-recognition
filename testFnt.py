@@ -26,7 +26,7 @@ sampleDir = dataCwd + "/" + "Sample001"
 files = os.listdir(sampleDir)
 collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in files])
 data_X = np.array([hog(collection[x], orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
-                    cells_per_block=(2, 2), visualise=False) for x in range(0,150)])
+                    cells_per_block=(2, 2), visualise=False) for x in range(0,50)])
 
 for f in os.listdir(dataCwd):
    if f != ".DS_Store":
@@ -35,7 +35,7 @@ for f in os.listdir(dataCwd):
            files = os.listdir(sampleDir)
            collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in files])
            data_X = np.concatenate((data_X,np.array([hog(collection[x], orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
-                    cells_per_block=(2, 2), visualise=False) for x in range(0,150)])))
+                    cells_per_block=(2, 2), visualise=False) for x in range(0,50)])))
 
 del collection
 del files,f
