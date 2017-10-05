@@ -8,7 +8,7 @@ from skimage.io import imread,imshow
 from sklearn import svm
 from sklearn.decomposition import PCA
 from sklearn.externals import joblib
-
+from sklearn.model_selection import train_test_split
 import os
 
 
@@ -27,7 +27,7 @@ files = os.listdir(sampleDir)
 
 collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in files])
 data_X = np.array([hog(transform.resize(x,(128,128), mode='reflect'), orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
-                    cells_per_block=(2, 2), visualise=False) for x in collection[:25]])
+                    cells_per_block=(2, 2), visualise=False) for x in collection])
 
 for f in os.listdir(dataCwd):
    if f != ".DS_Store":
@@ -36,26 +36,31 @@ for f in os.listdir(dataCwd):
            files = os.listdir(sampleDir)
            collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in files])
            data_X = np.concatenate((data_X,np.array([hog(transform.resize(x,(128,128), mode='reflect'), orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
-                    cells_per_block=(2, 2), visualise=False) for x in collection[:25]])))
+                    cells_per_block=(2, 2), visualise=False) for x in collection])))
 
 del collection
 del files,f
 
-data_Y = {}
-
-for f in range(1,63):
-    data_Y[f] = [str(getkey(f))] * 25
-
-
-
 Y = []
 for f in range(1,63):
-    Y += data_Y[f]
+    Y += [f] * 55
 
-clf = svm.SVC()
-clf.fit(data_X,Y)
+data_Y = np.array(Y)
 
-image = color.rgb2gray(imread(dataCwd + "/Sample015" + "/img015-043.png"))
+#clf = svm.SVC()
+#clf.fit(data_X,Y)
+
+x_train, x_test, y_train, y_test = train_test_split(data_X, data_Y, test_size=0.4, random_state=0)
+
+clf_rbf = svm.SVC(C=100)
+clf_rbf.fit(x_train,y_train)
+clf_rbf.score(x_test,y_test)
+
+clf_linear = svm.SVC(kernel='linear', C=0.001)
+clf_linear.fit(x_train,y_train)
+clf_linear.score(x_test,y_test)
+
+image = color.rgb2gray(imread(dataCwd + "/Sample012" + "/img012-043.png"))
 image = transform.resize(image,(128,128), mode='reflect')
 fd,hog_image = hog(image, orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
                     cells_per_block=(2, 2), visualise=True)
@@ -63,10 +68,10 @@ fd,hog_image = hog(image, orientations=9, block_norm='L2-Hys', pixels_per_cell=(
 imshow(image)
 imshow(hog_image)
 
-clf.predict(fd.reshape(1,-1))
-clf.score(data_X,Y)
+getkey(clf_linear.predict(fd.reshape(1,-1)))
+getkey(clf_rbf.predict(fd.reshape(1,-1)))
 
-joblib.dump(clf, os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
+joblib.dump(clf_linear, os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
 
 
 '''
