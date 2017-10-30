@@ -68,11 +68,11 @@ fd,hog_image = hog(image, orientations=9, block_norm='L2-Hys', pixels_per_cell=(
 imshow(image)
 imshow(hog_image)
 
-getkey(clf_linear.predict(fd.reshape(1,-1)))
+getkey(svm.predict(fd.reshape(1,-1)))
 getkey(clf_rbf.predict(fd.reshape(1,-1)))
 
 joblib.dump(clf_linear, os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
-
+svm = joblib.load(os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
 
 '''
 pca = PCA(n_components=2).fit(X)

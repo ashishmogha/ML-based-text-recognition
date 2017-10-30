@@ -25,7 +25,7 @@ def getkey(n):
 dataCwd = os.getcwd() + "/dataset/EnglishFnt"
 sampleDir = dataCwd + "/" + "Sample001"
 files = os.listdir(sampleDir)
-collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in random.sample(files,50)])
+collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in files])
 data_X = np.array([hog(x, orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
                     cells_per_block=(2, 2), visualise=False) for x in collection])
 
@@ -34,7 +34,7 @@ for f in os.listdir(dataCwd):
        if f != "Sample001":
            sampleDir = dataCwd + "/" + f
            files = os.listdir(sampleDir)
-           collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in random.sample(files,50)])
+           collection = np.array([color.rgb2gray(imread(sampleDir + "/" + im)) for im in files])
            data_X = np.concatenate((data_X,np.array([hog(x, orientations=9, block_norm='L2-Hys', pixels_per_cell=(12, 12),
                     cells_per_block=(2, 2), visualise=False) for x in collection])))
 
@@ -43,11 +43,11 @@ del files,f
 
 Y = []
 for f in range(1,63):
-    Y += [f] * 50
+    Y += [f] * 1016
 
 data_Y = np.array(Y)
 
-x_train, x_test, y_train, y_test = train_test_split(data_X, data_Y, test_size=0.4, random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(data_X, data_Y, test_size=0.2, random_state=0)
 
 clf_rbf = svm.SVC()
 clf_rbf.fit(x_train,y_train)
@@ -58,7 +58,7 @@ clf_linear.fit(x_train,y_train)
 clf_linear.score(x_test,y_test)
 
 
-joblib.dump(clf_linear, os.path.join(os.getcwd(),"savedSVMs", "svmfnt.pkl"))
+joblib.dump(clf_linear, os.path.join(os.getcwd(),"savedSVMs", "svmfnt-30-10-17.pkl"))
 
 
 image = color.rgb2gray(imread(dataCwd + "/Sample035" + "/img035-00271.png"))
