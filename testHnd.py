@@ -50,13 +50,13 @@ data_Y = np.array(Y)
 #clf = svm.SVC()
 #clf.fit(data_X,Y)
 
-x_train, x_test, y_train, y_test = train_test_split(data_X, data_Y, test_size=0.4, random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(data_X, data_Y, test_size=0.2, random_state=0)
 
 clf_rbf = svm.SVC(C=100)
 clf_rbf.fit(x_train,y_train)
 clf_rbf.score(x_test,y_test)
 
-clf_linear = svm.SVC(kernel='linear', C=0.001)
+clf_linear = svm.SVC(kernel='linear', C=0.01)
 clf_linear.fit(x_train,y_train)
 clf_linear.score(x_test,y_test)
 
@@ -68,11 +68,11 @@ fd,hog_image = hog(image, orientations=9, block_norm='L2-Hys', pixels_per_cell=(
 imshow(image)
 imshow(hog_image)
 
-getkey(svm.predict(fd.reshape(1,-1)))
+getkey(svm_1.predict(fd.reshape(1,-1)))
 getkey(clf_rbf.predict(fd.reshape(1,-1)))
 
-joblib.dump(clf_linear, os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
-svm = joblib.load(os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
+joblib.dump(clf_linear, os.path.join(os.getcwd(),"savedSVMs", "svmhnd-31-10-17.pkl"))
+svm_1 = joblib.load(os.path.join(os.getcwd(),"savedSVMs", "svmhnd.pkl"))
 
 '''
 pca = PCA(n_components=2).fit(X)
