@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Nov  2 16:17:10 2017
 
-@author: shivam
 """
 
 import matplotlib.pyplot as plt
